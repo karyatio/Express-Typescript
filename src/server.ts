@@ -7,6 +7,8 @@ import * as compression from "compression";
 import * as cors from "cors";
 
 // import routers
+import PostRouter from "./router/PostRouter";
+import UserRouter from "./router/UserRouter";
 
 // Server class
 class Server {
@@ -20,8 +22,11 @@ class Server {
 
   public config() {
     // Setup mongoose
-    const MONGO_URI = "mongodb://localhost/tes";
-    mongoose.connect(MONGO_URI || process.env.MONGODB_URI);
+    const MONGO_URI =
+      "mongodb://karyaTio:mongodb1@ds231589.mlab.com:31589/testingall";
+    mongoose.connect(MONGO_URI || process.env.MONGODB_URI, {
+      useNewUrlParser: true
+    });
 
     // config
     this.app.use(bodyParser.json());
@@ -36,7 +41,8 @@ class Server {
     router = express.Router();
 
     this.app.use("/", router);
-    // this.app.use('/api/v1/posts', PostRouter)
+    this.app.use("/api/v1/posts", PostRouter);
+    this.app.use("/api/v1/users", UserRouter);
   }
 }
 

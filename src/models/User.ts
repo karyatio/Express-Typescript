@@ -27,6 +27,12 @@ let UserSchema: Schema = new Schema({
     type: String,
     default: ""
   },
+  posts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post"
+    }
+  ],
   createdAt: Date,
   updatedAt: Date
 });

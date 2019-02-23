@@ -11,17 +11,89 @@ class PostRouter {
 
   public GetPosts(req: Request, res: Response): void {
     Post.find({})
-      .then(posts => {})
-      .catch(err => {});
+      .then(data => {
+        const status = res.statusCode;
+        res.json({ status, data });
+      })
+      .catch(err => {
+        const status = req.statusCode;
+        res.json({ status, err });
+      });
   }
 
-  public GetPost(req: Request, res: Response): void {}
+  public GetPost(req: Request, res: Response): void {
+    const { slug } = req.params;
+    Post.findOne({ slug })
+      .then(data => {
+        const status = res.statusCode;
+        res.json({ status, data });
+      })
+      .catch(err => {
+        const status = req.statusCode;
+        res.json({ status, err });
+      });
+  }
 
-  public CreatePost(req: Request, res: Response): void {}
+  public CreatePost(req: Request, res: Response): void {
+    const { title, body, featuredImage, slug } = req.body;
 
-  public UpdatePost(req: Request, res: Response): void {}
+    const post = new Post({
+      title,
+      body,
+      slug,
+      featuredImage
+    });
 
-  public DeletePost(req: Request, res: Response): void {}
+    post
+      .save()
+      .then(data => {
+        const status = res.statusCode;
+        res.json({ status, data });
+      })
+      .catch(err => {
+        const status = req.statusCode;
+        res.json({ status, err });
+      });
+  }
 
-  routes() {}
+  public UpdatePost(req: Request, res: Response): void {
+    const { slug } = req.params;
+
+    Post.findOneAndUpdate({ slug }, req.body)
+      .then(data => {
+        const status = res.statusCode;
+        res.json({ status, data });
+      })
+      .catch(err => {
+        const status = req.statusCode;
+        res.json({ status, err });
+      });
+  }
+
+  public DeletePost(req: Request, res: Response): void {
+    const { slug } = req.params;
+    Post.findOneAndDelete({ slug })
+      .then(data => {
+        const status = res.statusCode;
+        res.json({ status, data });
+      })
+      .catch(err => {
+        const status = req.statusCode;
+        res.json({ status, err });
+      });
+  }
+
+  routes() {
+    this.router.get("/", this.GetPosts);
+    this.router.get("/:slug", this.GetPost);
+    this.router.post("/", this.CreatePost);
+    this.router.put("/:slug", this.UpdatePost);
+    this.router.delete("/:slug", this.DeletePost);
+  }
 }
+
+// export
+const postRoutes = new PostRouter();
+postRoutes.routes();
+
+export default postRoutes.router;
